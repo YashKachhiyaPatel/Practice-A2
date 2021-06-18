@@ -1,3 +1,3 @@
-# COMP229-M2021-Week6b
+# Yash-MongoDB
 
 Practice CURD in MongoDB
