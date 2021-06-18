@@ -43,7 +43,7 @@ export function DisplayLoginPage(req: Request, res: Response, next: NextFunction
         return res.render('index', { title: 'Login', page: 'login', messages: req.flash('loginMessage'), displayName: UserDisplayName(req)   });
     }
     
-    return res.redirect('/clothing-list');
+    return res.redirect('/contacting-list');
 }
 
 export function ProcessLoginPage(req: Request, res: Response, next: NextFunction): void
@@ -94,4 +94,35 @@ export function ProcessLogoutPage(req: Request, res: Response, next: NextFunctio
    req.logout();
 
    res.redirect('/login');
+}
+export function ProcessRegisterPage(req: Request, res: Response, next: NextFunction): void
+{
+   // instantiate a new User Object
+   let newUser = new User
+   ({
+        username: req.body.username,
+        emailAddress: req.body.emailAddress,
+        displayName: req.body.FirstName + " " + req.body.LastName
+   });
+
+   User.register(newUser, req.body.password, (err) =>
+   {
+        if(err)
+        {
+            console.error('Error: Inserting New User');
+            if(err.name == "UserExistsError")
+            {
+                console.error('Error: User Already Exists');
+            }
+            req.flash('registerMessage', 'Registration Error');
+
+            return res.redirect('/register');
+        }
+
+        // after successful registration - login the user
+        return passport.authenticate('local')(req, res, () => 
+        {
+            return res.redirect('/clothing-list');
+        });
+   });
 }
